@@ -1,0 +1,4 @@
+#Ignore Visual Studio's files
+BasicBounceEngine
+Debug_x64
+Release_x64
