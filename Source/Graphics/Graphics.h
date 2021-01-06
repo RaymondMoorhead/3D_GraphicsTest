@@ -1,23 +1,41 @@
 #pragma once
 
-#include "../Core/BasicObject.h"
+#include "Object.h"
+#include "ImGuiDraw.h"
 
-#include <vector>
+#include <unordered_map>
+#include <unordered_set>
+#include <stack>
 
 struct GLFWwindow;
 
 class Graphics
 {
+  friend class ImGuiDraw;
+
   public:
     Graphics();
     
     void Initialize();
-    bool Draw(float& dt);
+    bool Update(float& dt);
     void Exit();
-
-    // set this to point at whatever function
-    // you have with imgui calls
-    void (*imgui_callback)();
+    
+    void CreateObject(const char* obj_file);
+    void DeleteObject(unsigned id);
 
     GLFWwindow* window;
+
+  private:
+    unsigned next_id_ = 0;
+    std::unordered_set<ImGuiDraw*> imgui_draw_;
+    std::unordered_map<unsigned, Object*> objects_;
+    std::stack<const char*> obj_to_create_;
+    std::stack<unsigned> obj_to_delete_;
+
+    void Draw_(float& dt);
+
+    void CreateNextObject_();
+    void DeleteNextObject_();
 };
+
+extern Graphics GRAPHICS;

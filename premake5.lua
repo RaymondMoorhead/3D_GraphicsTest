@@ -1,4 +1,4 @@
-workspace("BasicBounceEngine")
+workspace("3D_GraphicsTest")
 configurations {"Debug", "Release"}
 platforms {"x64"}
 
@@ -7,7 +7,7 @@ if _ACTION ~= nill then
 	project_action = _ACTION
 end
 
-location ("BasicBounceEngine")
+location ("3D_GraphicsTest")
 
 filter "configurations:Debug"
 symbols "On"
@@ -17,12 +17,12 @@ optimize "On"
 
 filter{}
 
-project "BasicBounceEngine"
+project "3D_GraphicsTest"
   kind "ConsoleApp"
   language "C++"
   
   targetdir "%{cfg.buildcfg}_%{cfg.platform}"
-  targetname "BasicBounceEngine"
+  targetname "3D_GraphicsTest"
 
   files {"./Source/**.cpp", "./Source/**.h", "./Source/**.inl", "./Dependencies/**.cpp"}
 

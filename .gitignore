@@ -1,4 +1,5 @@
 #Ignore Visual Studio's files
 BasicBounceEngine
+3D_GraphicsTest
 Debug_x64
 Release_x64

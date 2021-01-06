@@ -10,7 +10,9 @@
 
 #include <string>
 
-Graphics::Graphics() : imgui_callback(nullptr), window(nullptr)
+static Graphics GRAPHICS;
+
+Graphics::Graphics() : window(nullptr)
 {
 
 }
@@ -33,7 +35,7 @@ void Graphics::Initialize()
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 
   // Create window with graphics context
-  window = glfwCreateWindow(1280, 720, "Basic Bounce Engine", NULL, NULL);
+  window = glfwCreateWindow(1280, 720, "3D Graphics Test", NULL, NULL);
   LOG_MARKED_IF("glfwCreateWindow failed", !window, '!');
 
   glfwMakeContextCurrent(window);
@@ -55,7 +57,21 @@ void Graphics::Initialize()
   ImGui_ImplOpenGL3_Init(glsl_version);
 }
 
-bool Graphics::Draw(float& dt, std::vector<BasicObject*>* objects)
+bool Graphics::Update(float& dt)
+{
+  // create objects
+  while (!obj_to_create_.empty())
+    CreateNextObject_();
+
+  // delete objects
+  while (!obj_to_delete_.empty())
+    DeleteNextObject_();
+
+  Draw_(dt);
+  return glfwWindowShouldClose(window);
+}
+
+void Graphics::Draw_(float& dt)
 {
   glfwPollEvents();
 
@@ -65,10 +81,8 @@ bool Graphics::Draw(float& dt, std::vector<BasicObject*>* objects)
   ImGui::NewFrame();
 
   // draw objects
-  for (auto it = objects->begin(); it != objects->end(); ++it)
-  {
-    (*it)->Draw();
-  }
+  for (auto it = objects_.begin(); it != objects_.end(); ++it)
+    it->second->Draw();
 
   // draw imgui
   if (ImGui::BeginMainMenuBar())
@@ -82,12 +96,12 @@ bool Graphics::Draw(float& dt, std::vector<BasicObject*>* objects)
 
     if (ImGui::BeginMenu("Objects"))
     {
-      for (size_t i = 0; i < objects->size(); ++i)
+      for (auto it = imgui_draw_.begin(); it != imgui_draw_.end(); ++it)
       {
-        ImGui::PushID(int(i));
-        if (ImGui::BeginMenu((*objects)[i]->name))
+        ImGui::PushID(*it); // use the address as a unique id
+        if ((*it)->create_window_ && ImGui::BeginMenu((*it)->name_))
         {
-          (*objects)[i]->PrintImGui();
+          (*it)->DrawImGui();
           ImGui::EndMenu();
         }
         ImGui::PopID();
@@ -97,8 +111,8 @@ bool Graphics::Draw(float& dt, std::vector<BasicObject*>* objects)
     ImGui::EndMainMenuBar();
   }
 
-  if (imgui_callback)
-    imgui_callback();
+  for (auto it = imgui_draw_.begin(); it != imgui_draw_.end(); ++it)
+    (*it)->DrawImGui();
 
   // Rendering
   ImGui::Render();
@@ -113,8 +127,6 @@ bool Graphics::Draw(float& dt, std::vector<BasicObject*>* objects)
 
   GLenum err = glGetError();
   LOG_MARKED_IF("GraphicsController::Update caught glError " << err << ", you should add checks to your code to find the exact point of failure", err != 0, '!');
-
-  return glfwWindowShouldClose(window);
 }
 
 void Graphics::Exit()
@@ -126,4 +138,28 @@ void Graphics::Exit()
 
   glfwDestroyWindow(window);
   glfwTerminate();
+}
+
+void Graphics::CreateObject(const char* obj_file)
+{
+  obj_to_create_.push(obj_file);
+}
+
+void Graphics::DeleteObject(unsigned id)
+{
+  obj_to_delete_.push(id);
+}
+
+void Graphics::CreateNextObject_()
+{
+  const char* file = obj_to_create_.top();
+  Object* obj = new Object(next_id_++);
+  // object serialization here
+  obj_to_create_.pop();
+}
+
+void Graphics::DeleteNextObject_()
+{
+  objects_.erase(objects_.find(obj_to_delete_.top()));
+  obj_to_delete_.pop();
 }

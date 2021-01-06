@@ -7,17 +7,12 @@
 #include "Vector.h"
 #include <cmath>
 
-Vector::Vector() : x(0), y(0), z(0), flags_(flag_is_2d_)
+Vector::Vector() : x(0), y(0), z(0)
 {
 
 }
 
 Vector::Vector(const Vector& rhs) : x(rhs.x), y(rhs.y), z(rhs.z)
-{
-
-}
-
-Vector::Vector(float x_, float y_) : x(x_), y(y_), z(0), flags_(flag_is_2d_)
 {
 
 }
@@ -37,7 +32,6 @@ Vector::~Vector()
 Vector& Vector::operator()(float x_, float y_)
 {
   FlagClear_(0xFF);
-  FlagSet_(flag_is_2d_);
   x = x_;
   y = y_;
   z = 0;
@@ -47,7 +41,6 @@ Vector& Vector::operator()(float x_, float y_)
 Vector& Vector::operator()(float x_, float y_, float z_)
 {
   FlagClear_(0xFF);
-  FlagClear_(flag_is_2d_);
   x = x_;
   y = y_;
   z = z_;

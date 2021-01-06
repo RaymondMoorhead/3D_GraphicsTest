@@ -7,30 +7,16 @@
 #pragma once
 
 //!  Structure which handles point and vector math
-/*!
-   NOTE: It would be vastly preferable to call most of these functions with
-         references to the rhs data, rather than by copy- but much of the
-         math involved requires "velocity += delta_time * gravity" which
-         can only be passed in by copy, unless we create a middleman 'temp'
-         which will likely carry with it just as many inefficiencies, and
-         overcomplicates the code on review.
-*/
 struct Vector
 {
   public:
-    //!  \brief Default Constructor which initializes Vector for 2D math.
+    //!  \brief Default Constructor which initializes Vector.
     Vector();
     /*!
       \brief Copy Constructor, pulls all data (including flags) from source.
       \param rhs The source Vector to copy from.
     */
     Vector(const Vector& rhs);
-    /*!
-      \brief Constructor which forms a 2D Vector from the given x and y.
-      \param x The x value.
-      \param y The y value.
-    */
-    Vector(float x, float y);
     /*!
       \brief Constructor which forms a 3D Vector from the given x, y, and z.
       \param x The x value.
@@ -220,9 +206,8 @@ struct Vector
     float length_ = 0;
     
     // FLAG VALUES
-    static const char flag_is_2d_ = 0x01;              /*!< Only x and y are in use. */
-    static const char flag_is_normalized_ = 0x02;      /*!< Has not been changed since Normalize was called. */
-    static const char flag_length_is_accurate_ = 0x04; /*!< Has not been changed since Length was called. */
+    static const char flag_is_normalized_ = 0x01;      /*!< Has not been changed since Normalize was called. */
+    static const char flag_length_is_accurate_ = 0x02; /*!< Has not been changed since Length was called. */
     
     /*!
       \brief Returns the state of given flag(s), returns true if any are set.
