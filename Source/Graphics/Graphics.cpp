@@ -10,7 +10,7 @@
 
 #include <string>
 
-static Graphics GRAPHICS;
+Graphics GRAPHICS;
 
 Graphics::Graphics() : window(nullptr)
 {
@@ -24,10 +24,15 @@ static void glfw_error_callback(int error, const char* description)
 
 void Graphics::Initialize()
 {
-  // Setup window
+  // Setup glfw
   glfwSetErrorCallback(glfw_error_callback);
   int result = glfwInit();
   LOG_MARKED_IF("glfwInit failed", !result, '!');
+
+  // set window dimensions
+  viewport.win_width = 1280;
+  viewport.win_height = 720;
+  viewport.win_ratio = float(viewport.win_width) / float(viewport.win_height);
 
   // Pick GL and GLSL versions
   const char* glsl_version = "#version 130";
@@ -35,7 +40,7 @@ void Graphics::Initialize()
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 
   // Create window with graphics context
-  window = glfwCreateWindow(1280, 720, "3D Graphics Test", NULL, NULL);
+  window = glfwCreateWindow(viewport.win_width, viewport.win_height, "3D Graphics Test", NULL, NULL);
   LOG_MARKED_IF("glfwCreateWindow failed", !window, '!');
 
   glfwMakeContextCurrent(window);
@@ -68,7 +73,28 @@ bool Graphics::Update(float& dt)
     DeleteNextObject_();
 
   Draw_(dt);
-  return glfwWindowShouldClose(window);
+  return !glfwWindowShouldClose(window);
+}
+
+void Graphics::Exit()
+{
+  // Cleanup
+  ImGui_ImplOpenGL3_Shutdown();
+  ImGui_ImplGlfw_Shutdown();
+  ImGui::DestroyContext();
+
+  glfwDestroyWindow(window);
+  glfwTerminate();
+}
+
+void Graphics::CreateObject(const char* obj_file)
+{
+  obj_to_create_.push(obj_file);
+}
+
+void Graphics::DeleteObject(unsigned id)
+{
+  obj_to_delete_.push(id);
 }
 
 void Graphics::Draw_(float& dt)
@@ -127,27 +153,6 @@ void Graphics::Draw_(float& dt)
 
   GLenum err = glGetError();
   LOG_MARKED_IF("GraphicsController::Update caught glError " << err << ", you should add checks to your code to find the exact point of failure", err != 0, '!');
-}
-
-void Graphics::Exit()
-{
-  // Cleanup
-  ImGui_ImplOpenGL3_Shutdown();
-  ImGui_ImplGlfw_Shutdown();
-  ImGui::DestroyContext();
-
-  glfwDestroyWindow(window);
-  glfwTerminate();
-}
-
-void Graphics::CreateObject(const char* obj_file)
-{
-  obj_to_create_.push(obj_file);
-}
-
-void Graphics::DeleteObject(unsigned id)
-{
-  obj_to_delete_.push(id);
 }
 
 void Graphics::CreateNextObject_()

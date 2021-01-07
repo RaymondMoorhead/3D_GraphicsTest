@@ -1,3 +1,8 @@
+/*! \file ImGuiDraw.h
+    \date 1/7/2021
+    \author Raymond Moorhead
+    \brief Contains ImGuiDraw abstract class declaration, used to display debugging data.
+*/
 #pragma once
 
 class ImGuiDraw

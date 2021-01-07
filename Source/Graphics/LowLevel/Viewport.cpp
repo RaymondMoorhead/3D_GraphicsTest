@@ -6,14 +6,7 @@
 
 #include "Viewport.h"
 
-#include <SDL_opengl.h>
-#include <math.h>
-
-#include "../../DefineLists/DebugOptions.inl"
-
-#ifdef _DEBUG
-  #include "../../Core/Core.h"
-#endif
+#include "GL/glew.h"
 
 // initialize the static variables
 int Viewport::win_width = 0;

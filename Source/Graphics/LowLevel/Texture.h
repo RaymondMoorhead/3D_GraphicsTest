@@ -27,19 +27,10 @@ struct Texture : public ImGuiDraw
     */
     Texture(const char* file);
     
-    /*!
-      \brief Constructor, sets default texture modes and attempts to load multiple files.
-      \param folder_and_name The first part of a file name and path, such as "Hero\Hero-Idle"
-      \param ext The extension (with period) of the file, such as ".png"
-      \param path The TextureType, which hints at the path.
-    */
-    Texture(const char* folder_and_name, const char* ext);
-    
     //! Desstructor, sets default texture modes and deletes texture.
     ~Texture();
-    
 
-    //!  \brief Displays full texture.
+    //!  \brief Displays full texture data.
     void DrawImGui();
     
     /*!
@@ -58,7 +49,7 @@ struct Texture : public ImGuiDraw
     /*! \brief Binds the texture as the current active GL_TEXTURE_2D texture object.
         \param tex The index of the texture to be used.
     */
-    void Bind(GLuint tex = 0) const;
+    void Bind() const;
     
     //! The ID of the first texture, used by OpenGL to reference this texture.
     GLuint id;
@@ -90,5 +81,5 @@ struct Texture : public ImGuiDraw
       \param data The image information.
       \param index The index for the width, height, and id information.
     */
-    void Generate_(unsigned char* data, size_t index = 0);
+    void Generate_(unsigned char* data);
 };

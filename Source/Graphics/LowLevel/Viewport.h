@@ -1,19 +1,10 @@
 /*! \file Viewport.h
     \date 1/17/2020
     \author Raymond Moorhead
-    \brief Contains ViewportManager struct declaration, a helper struct to reduce file size of GraphicsController.
+    \brief Contains Viewport struct declaration, a helper struct to reduce file size of Graphics.
 */
 
 #pragma once
-
-//! Recommended Viewport back-to-front positions only, you can make your own.
-enum ViewportOrder
-{
-  #define PremadeViewport(Name, Order, Unused1, Unused2, Unused3, Unused4, Unused5, Unused6, Unused7) VO_ ## Name = Order,
-  #include "../../DefineLists/PremadeViewports.inl"
-    NumViewportOrders
-  #undef PremadeViewport
-};
 
 struct Viewport
 {
@@ -57,6 +48,7 @@ struct Viewport
     /*! \brief Sets out variables with the relative position of a point from the lower left of the window.
         \param x The window x position of the point in question.
         \param y The window y position of the point in question.
+        \return True if the point is inside the Viewport
     */
       bool IsInside(int x, int y) const;
     
